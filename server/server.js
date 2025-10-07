@@ -18,7 +18,10 @@ await connectDB(); //successful
 
 // Middleware
 app.use(express.json());
-app.use(cors()); // to connect with frontend
+app.use(cors({
+    origin: "http://localhost:5173", // Your Vite frontend URL
+    credentials: true
+}));
 app.use(clerkMiddleware()); // clerk middleware
 
 

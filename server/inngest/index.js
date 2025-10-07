@@ -14,10 +14,10 @@ const syncUserCreation = inngest.createFunction(
             email:email_address[0].email_address,
             name:first_name+' '+last_name,
             image:image_url
-        }
+        };
         await User.create(userData);
     }
-)
+);
 
 // Inngest Function to delete user from database
 const syncUserDeletion = inngest.createFunction(
@@ -27,7 +27,7 @@ const syncUserDeletion = inngest.createFunction(
         const {id} =event.data;
         await User.findByIdAndDelete(id);
     }
-)
+);
 
 // Inngest Function to update user from database
 const syncUserUpdation = inngest.createFunction(
@@ -40,10 +40,10 @@ const syncUserUpdation = inngest.createFunction(
             email:email_address[0].email_address,
             name:first_name+' '+last_name,
             image:image_url
-        }
+        };
         await User.findByIdAndUpdate(id,userData);
     }
-)
+);
 
 
 export const functions = [syncUserCreation,syncUserDeletion,syncUserUpdation];
