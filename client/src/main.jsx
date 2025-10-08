@@ -1,20 +1,15 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import {BrowserRouter} from 'react-router-dom'
-import { ClerkProvider } from '@clerk/clerk-react'
+import { BrowserRouter } from 'react-router-dom'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 
-// Import your Publishable Key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const root = createRoot(document.getElementById('root'))
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error('Missing Publishable Key')
-}
-
-createRoot(document.getElementById('root')).render(
-  <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+root.render(
+  <ErrorBoundary>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-    </ClerkProvider>
+  </ErrorBoundary>
 )
