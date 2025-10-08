@@ -1,15 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
-import { MenuIcon, SearchIcon, TicketPlus, XIcon } from 'lucide-react'
+import { MenuIcon, SearchIcon, XIcon } from 'lucide-react'
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react'
+import { syncUserToBackend } from '../lib/api'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const { user } = useUser();
+    const { user, isLoaded } = useUser();
     const { openSignIn } = useClerk();
-
     const navigate = useNavigate();
+
+    // Sync user to backend when user logs in (only once per session)
+    useEffect(() => {
+        const syncUser = async () => {
+            if (isLoaded && user) {
+                // Check if this user has already been synced in this session
+                const syncedUsers = JSON.parse(sessionStorage.getItem('syncedUsers') || '[]');
+                
+                if (!syncedUsers.includes(user.id)) {
+                    try {
+                        await syncUserToBackend(user);
+                        // Mark user as synced in this session
+                        syncedUsers.push(user.id);
+                        sessionStorage.setItem('syncedUsers', JSON.stringify(syncedUsers));
+                    } catch (error) {
+                        console.error('Failed to sync user:', error);
+                    }
+                }
+            }
+        };
+
+        syncUser();
+    }, [user, isLoaded]);
 
     return (
         <div className="fixed top-0 left-0 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5 z-50 bg-black/70 backdrop-blur md:bg-transparent">
@@ -46,7 +69,7 @@ const Navbar = () => {
                 {/* Hamburger Icon (mobile only) */}
                 <MenuIcon
                     className="max-md:ml-4 md:hidden w-8 h-8 cursor-pointer text-white"
-                    onClick={() => setIsOpen(true)} // 🌟 FIXED (explicit true instead of toggle)
+                    onClick={() => setIsOpen(true)}
                 />
             </div>
 
@@ -56,12 +79,12 @@ const Navbar = () => {
                     {/* Close Button */}
                     <XIcon
                         className="absolute top-6 right-6 w-6 h-6 cursor-pointer"
-                        onClick={() => setIsOpen(false)} // 🌟 FIXED (explicit false)
+                        onClick={() => setIsOpen(false)}
                     />
                     <Link
                         to="/"
                         onClick={() => {
-                            window.scrollTo(0, 0); // 🌟 FIXED (was scrollTo)
+                            window.scrollTo(0, 0);
                             setIsOpen(false);
                         }}
                         className="hover:text-blue-400 transition-colors"
