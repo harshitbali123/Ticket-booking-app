@@ -59,10 +59,21 @@ router.post('/login', async (req, res) => {
     const payload = { userId: user.id };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    res.json({ token, message: 'Login successful' });
+    //  Send user info back along with token
+    res.status(200).json({
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        _id: user._id,
+      },
+      message: 'Login successful',
+    });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 module.exports = router;

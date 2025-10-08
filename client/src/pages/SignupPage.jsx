@@ -62,7 +62,7 @@ const SignUpPage = () => {
     <div
       className="min-h-screen flex items-center justify-center relative bg-black bg-cover bg-center"
       style={{ backgroundImage: `url(${heroBackground})` }}
-    >
+      >
       <div className="absolute inset-0 bg-black/70"></div>
       <BlurCircle top="-200px" left="-200px" />
       <BlurCircle bottom="-200px" right="-200px" />
